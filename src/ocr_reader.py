@@ -1,9 +1,9 @@
 import pytesseract
 from PIL import Image
-from dotenv import load_dotenv
+
 import os
 
-load_dotenv()
+
 
 TESSERACT_CMD = os.getenv("TESSERACT_CMD")
 if TESSERACT_CMD:
