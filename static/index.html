@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignSpeak</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>SignSpeak</h1>
+        <p>Upload an image to extract text, translate it, and learn the sign.</p>
+    </header>
+
+    <main>
+        <section class="upload-section">
+            <form id="upload-form">
+                <input type="file" id="image-input" accept="image/*" required />
+                <button type="submit">Upload and Process</button>
+            </form>
+            <div id="result"></div>
+        </section>
+
+        <section class="signs-section">
+            <h2>Sign Language Glossary</h2>
+            <div id="signs-list">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

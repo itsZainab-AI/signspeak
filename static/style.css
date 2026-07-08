@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.upload-section, .signs-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#upload-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+#result {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    background: #e8f5e9;
+}
+
+#signs-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.sign-item {
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.sign-term {
+    font-weight: bold;
+    color: #333;
+}
+
+.sign-meaning {
+    font-size: 0.9em;
+    color: #666;
+}
