@@ -1,3 +1,5 @@
+from src.translator import _call_ollama
+
 SIGN_LANGUAGE_GLOSSARY = {
     "hello": "Wave hand with palm facing outward",
     "thank you": "Touch chin with fingertips and move hand forward",
@@ -36,3 +38,40 @@ FAQ = {
     "What should I do if I lose my child?": "Alert the nearest staff member or go to Guest Services near the main entrance immediately.",
     "How can I report a safety concern?": "Speak to any staff member or call the stadium hotline posted on your seat.",
 }
+
+
+def answer_question(question: str) -> str:
+    prompt = (
+        "You are a helpful stadium assistant. Given the user's question and a list of FAQ questions, "
+        "pick the FAQ question that is closest in meaning to the user's question and return ONLY that exact FAQ question verbatim, "
+        "copied from the list. Do not return the answer. If none are close enough, return exactly 'NO_MATCH'.\n\n"
+        f"User question: {question}\n\n"
+        "FAQ questions:\n"
+    )
+    for faq_question in FAQ:
+        prompt += f"- {faq_question}\n"
+    prompt += (
+        "\nReturn only the matching FAQ question (exactly as written) or 'NO_MATCH'. "
+        "Do not add any extra text."
+    )
+
+    try:
+        response = _call_ollama(prompt)
+    except Exception:
+        return "I'm not sure, please ask venue staff."
+
+    cleaned_response = response.strip()
+    if len(cleaned_response) >= 2 and cleaned_response[0] == cleaned_response[-1] and cleaned_response[0] in {'"', "'"}:
+        cleaned_response = cleaned_response[1:-1].strip()
+
+    if cleaned_response.upper() == "NO_MATCH":
+        return "I'm not sure, please ask venue staff."
+
+    if cleaned_response in FAQ:
+        return FAQ[cleaned_response]
+
+    for faq_question in FAQ:
+        if cleaned_response.lower() == faq_question.lower():
+            return FAQ[faq_question]
+
+    return "I'm not sure, please ask venue staff."
