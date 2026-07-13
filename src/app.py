@@ -2,18 +2,51 @@ import os
 import tempfile
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile, Body
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-
-from fastapi import Body
+from fastapi.responses import JSONResponse
+from starlette.requests import Request
 
 from src.knowledge_base import answer_question
-from src.ocr_reader import extract_text
-from src.translator import translate_and_explain
+from src.ocr_reader import OCRError, extract_text
+from src.translator import TranslationError, translate_and_explain
 
 load_dotenv()
 
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024
+ALLOWED_IMAGE_CONTENT_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/bmp", "image/gif"}
+ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
+MAX_QUESTION_LENGTH = 1000
+MAX_LANGUAGE_LENGTH = 50
+
 app = FastAPI(title="SignSpeak API")
+
+
+def validate_non_empty_string(value: str, name: str, max_length: int) -> str:
+    if not isinstance(value, str):
+        raise HTTPException(status_code=400, detail=f"{name} must be a string")
+    stripped = value.strip()
+    if not stripped:
+        raise HTTPException(status_code=400, detail=f"{name} must not be empty")
+    if len(stripped) > max_length:
+        raise HTTPException(status_code=400, detail=f"{name} must be at most {max_length} characters")
+    return stripped
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(status_code=400, content={"detail": "Invalid request parameters"})
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,23 +62,35 @@ async def scan_image(
     file: UploadFile = File(...),
     target_language: str = Form("en"),
 ):
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="File must be an image")
+    if not file.content_type or file.content_type.lower() not in ALLOWED_IMAGE_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="File must be a supported image type")
 
-    valid_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
-    if not file.filename or not file.filename.lower().endswith(valid_extensions):
+    if not file.filename or not file.filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
         raise HTTPException(status_code=400, detail="File must have a valid image extension")
+
+    target_language = validate_non_empty_string(target_language, "Target language", MAX_LANGUAGE_LENGTH)
 
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".tmp")
     temp_path = temp_file.name
     temp_file.close()
 
     try:
-        with open(temp_path, "wb") as destination:
-            destination.write(await file.read())
+        file_bytes = await file.read(MAX_UPLOAD_SIZE + 1)
+        if not file_bytes:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty")
+        if len(file_bytes) > MAX_UPLOAD_SIZE:
+            raise HTTPException(status_code=400, detail="Uploaded file exceeds the 5MB size limit")
 
-        original_text = extract_text(temp_path)
-        result = translate_and_explain(original_text, target_language)
+        with open(temp_path, "wb") as destination:
+            destination.write(file_bytes)
+
+        try:
+            original_text = extract_text(temp_path)
+            result = translate_and_explain(original_text, target_language)
+        except OCRError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+        except TranslationError as e:
+            raise HTTPException(status_code=502, detail=str(e))
 
         return {
             "original_text": original_text,
@@ -59,8 +104,7 @@ async def scan_image(
 
 @app.post("/ask")
 async def ask(question: str = Body(..., embed=True)):
-    if not question or not question.strip():
-        raise HTTPException(status_code=400, detail="Question must not be empty")
+    question = validate_non_empty_string(question, "Question", MAX_QUESTION_LENGTH)
 
     answer = answer_question(question)
     return {"answer": answer}

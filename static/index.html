@@ -1,32 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignSpeak</title>
-    <link rel="stylesheet" href="/static/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignSpeak — Stadium Assistance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Arabic:wght@500;700&family=Noto+Sans+Devanagari:wght@500;700&family=Noto+Sans+JP:wght@500;700&family=Noto+Sans+KR:wght@500;700&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>SignSpeak</h1>
-        <p>Upload an image to extract text, translate it, and learn the sign.</p>
-    </header>
 
-    <main>
-        <section class="upload-section">
-            <form id="upload-form">
-                <input type="file" id="image-input" accept="image/*" required />
-                <button type="submit">Upload and Process</button>
-            </form>
-            <div id="result"></div>
-        </section>
+<div class="field-lines" aria-hidden="true"></div>
 
-        <section class="signs-section">
-            <h2>Sign Language Glossary</h2>
-            <div id="signs-list">Loading...</div>
-        </section>
-    </main>
+<div class="app">
 
-    <script src="/static/script.js"></script>
+  <header class="site-header">
+    <div class="wordmark">
+      <svg class="gate-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="4" y="6" width="4" height="28" fill="currentColor"/>
+        <rect x="32" y="6" width="4" height="28" fill="currentColor"/>
+        <rect x="4" y="6" width="32" height="4" fill="currentColor"/>
+        <path d="M14 20 L20 14 L26 20 L20 26 Z" fill="var(--floodlight)"/>
+      </svg>
+      <h1>SignSpeak</h1>
+    </div>
+    <p class="eyebrow">Multilingual assistance point &middot; Gate 04 &middot; FIFA World&nbsp;Cup 2026</p>
+  </header>
+
+  <main>
+
+    <!-- ============ PANEL 01 — SCAN & TRANSLATE ============ -->
+    <section class="panel" id="scan-panel" aria-labelledby="scan-heading">
+      <div class="panel-label">
+        <span class="panel-number">01</span>
+        <h2 id="scan-heading">Scan &amp; translate a sign</h2>
+      </div>
+      <p class="panel-sub">Point your camera at any sign, menu, or notice. We'll read it and translate it for you.</p>
+
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload or capture a photo of a sign">
+        <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
+        <svg class="dropzone-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="4" y="12" width="40" height="28" rx="3" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="24" cy="26" r="8" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="16" y="6" width="10" height="6" rx="1.5" fill="currentColor"/>
+        </svg>
+        <p class="dropzone-text"><strong>Tap to scan</strong> or choose a photo</p>
+        <div class="scan-preview" id="scan-preview" hidden>
+          <img id="preview-image" alt="Selected sign preview">
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="select-wrap">
+          <label for="language-select" class="control-label">Translate to</label>
+          <select id="language-select" class="gate-select">
+            <option value="Arabic">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; &middot; Arabic</option>
+            <option value="Chinese">&#20013;&#25991; &middot; Chinese</option>
+            <option value="English" selected>English</option>
+            <option value="French">Fran&ccedil;ais &middot; French</option>
+            <option value="German">Deutsch &middot; German</option>
+            <option value="Hindi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368; &middot; Hindi</option>
+            <option value="Japanese">&#26085;&#26412;&#35486; &middot; Japanese</option>
+            <option value="Korean">&#54620;&#44397;&#50612; &middot; Korean</option>
+            <option value="Portuguese">Portugu&ecirc;s &middot; Portuguese</option>
+            <option value="Spanish">Espa&ntilde;ol &middot; Spanish</option>
+          </select>
+        </div>
+        <button id="scan-button" class="btn-primary" disabled>
+          <span class="btn-label">Scan sign</span>
+        </button>
+      </div>
+
+      <div class="status-panel" id="scan-loading" hidden aria-live="polite">
+        <div class="scan-line"></div>
+        <p>Reading the sign&hellip;</p>
+      </div>
+
+      <div class="status-panel error" id="scan-error" hidden aria-live="assertive"></div>
+
+      <div class="results-board" id="scan-results" hidden aria-live="polite">
+        <div class="result-row" data-row="original">
+          <span class="result-label"><span class="result-index">01</span>Original</span>
+          <span class="result-value" id="result-original"></span>
+        </div>
+        <div class="result-row" data-row="translation">
+          <span class="result-label"><span class="result-index">02</span>Translation</span>
+          <span class="result-value" id="result-translation"></span>
+        </div>
+        <div class="result-row" data-row="explanation">
+          <span class="result-label"><span class="result-index">03</span>Meaning</span>
+          <span class="result-value" id="result-explanation"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PANEL 02 — ASK A QUESTION ============ -->
+    <section class="panel" id="ask-panel" aria-labelledby="ask-heading">
+      <div class="panel-label">
+        <span class="panel-number">02</span>
+        <h2 id="ask-heading">Ask a question</h2>
+      </div>
+      <p class="panel-sub">Restrooms, food, exits, medical help &mdash; ask anything about the venue.</p>
+
+      <form id="ask-form" class="ask-row">
+        <label for="question-input" class="visually-hidden">Your question</label>
+        <input type="text" id="question-input" placeholder="Where's the nearest restroom?" autocomplete="off">
+        <button type="submit" class="btn-primary">
+          <span class="btn-label">Ask</span>
+        </button>
+      </form>
+
+      <div class="status-panel" id="ask-loading" hidden aria-live="polite">
+        <div class="scan-line"></div>
+        <p>Checking&hellip;</p>
+      </div>
+
+      <div class="status-panel error" id="ask-error" hidden aria-live="assertive"></div>
+
+      <div class="answer-card" id="answer-card" hidden aria-live="polite">
+        <span class="answer-tag">Answer</span>
+        <p id="answer-text"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Processed on-device &middot; no data leaves the stadium</p>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

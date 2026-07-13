@@ -41,12 +41,14 @@ def _translate_with_libretranslate(text: str, target_language: str) -> str:
         )
         response.raise_for_status()
         return response.json()["translatedText"]
-    except requests.exceptions.ConnectionError as e:
-        raise TranslationError(f"LibreTranslate connection failed: {str(e)}") from e
-    except requests.exceptions.Timeout as e:
-        raise TranslationError(f"LibreTranslate request timed out: {str(e)}") from e
-    except Exception as e:
-        raise TranslationError(f"LibreTranslate translation failed: {str(e)}") from e
+    except requests.exceptions.ConnectionError:
+        raise TranslationError("LibreTranslate connection failed")
+    except requests.exceptions.Timeout:
+        raise TranslationError("LibreTranslate request timed out")
+    except requests.exceptions.HTTPError:
+        raise TranslationError("LibreTranslate service returned an error")
+    except Exception:
+        raise TranslationError("LibreTranslate translation failed")
 
 
 def _call_ollama(prompt: str) -> str:
@@ -65,8 +67,10 @@ def _call_ollama(prompt: str) -> str:
         response.raise_for_status()
         data = response.json()
         return data["response"].strip()
-    except Exception as e:
-        raise TranslationError(f"Ollama request failed: {str(e)}") from e
+    except requests.exceptions.RequestException:
+        raise TranslationError("Ollama request failed")
+    except Exception:
+        raise TranslationError("Ollama processing failed")
 
 
 def _extract_json_object(text: str) -> dict | None:
