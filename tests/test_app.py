@@ -37,6 +37,33 @@ def test_scan_endpoint_returns_translation_and_explanation(monkeypatch):
     }
 
 
+def test_scan_endpoint_accepts_content_types_with_parameters(monkeypatch):
+    monkeypatch.setattr(app_module, "extract_text", lambda path: "hello")
+    monkeypatch.setattr(
+        app_module,
+        "translate_and_explain",
+        lambda text, target_language: {
+            "translation": "hola",
+            "explanation": "A greeting",
+        },
+    )
+
+    async def run_request():
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app_module.app),
+            base_url="http://testserver",
+        ) as client:
+            return await client.post(
+                "/scan",
+                data={"target_language": "es"},
+                files={"file": ("sample.png", b"fake-image-bytes", "image/png; charset=utf-8")},
+            )
+
+    response = asyncio.run(run_request())
+
+    assert response.status_code == 200
+
+
 def test_scan_endpoint_rejects_non_image_files():
     async def run_request():
         async with httpx.AsyncClient(

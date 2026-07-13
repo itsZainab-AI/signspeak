@@ -23,6 +23,12 @@ MAX_LANGUAGE_LENGTH = 50
 app = FastAPI(title="SignSpeak API")
 
 
+def normalize_content_type(value: str | None) -> str | None:
+    if not value:
+        return None
+    return value.split(";", 1)[0].strip().lower()
+
+
 def validate_non_empty_string(value: str, name: str, max_length: int) -> str:
     if not isinstance(value, str):
         raise HTTPException(status_code=400, detail=f"{name} must be a string")
@@ -62,7 +68,8 @@ async def scan_image(
     file: UploadFile = File(...),
     target_language: str = Form("en"),
 ):
-    if not file.content_type or file.content_type.lower() not in ALLOWED_IMAGE_CONTENT_TYPES:
+    content_type = normalize_content_type(file.content_type)
+    if not content_type or content_type not in ALLOWED_IMAGE_CONTENT_TYPES:
         raise HTTPException(status_code=400, detail="File must be a supported image type")
 
     if not file.filename or not file.filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
