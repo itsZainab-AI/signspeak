@@ -3,7 +3,6 @@ import re
 
 import requests
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -11,9 +10,6 @@ load_dotenv()
 class TranslationError(Exception):
     pass
 
-
-TRANSLATION_API_URL = os.getenv("TRANSLATION_API_URL")
-TRANSLATION_API_KEY = os.getenv("TRANSLATION_API_KEY")
 
 LANGUAGE_TO_ISO = {
     "arabic": "ar",
@@ -27,23 +23,6 @@ LANGUAGE_TO_ISO = {
     "portuguese": "pt",
     "english": "en",
 }
-
-
-def translate_text(text: str, target_language: str = "en") -> str:
-    if not TRANSLATION_API_URL or not TRANSLATION_API_KEY:
-        return f"[Translation API not configured] {text}"
-    try:
-        response = requests.post(
-            TRANSLATION_API_URL,
-            json={"text": text, "target": target_language},
-            headers={"Authorization": f"Bearer {TRANSLATION_API_KEY}"},
-            timeout=10,
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data.get("translated_text", text)
-    except Exception as e:
-        return f"Error: {str(e)}"
 
 
 def _translate_with_libretranslate(text: str, target_language: str) -> str:
@@ -71,6 +50,12 @@ def _translate_with_libretranslate(text: str, target_language: str) -> str:
 
 
 def _call_ollama(prompt: str) -> str:
+    """Call the local Ollama API and return the clean extracted response text.
+
+    Parses the JSON reply from Ollama, extracts the ``response`` field,
+    and returns it stripped of surrounding whitespace. Never returns
+    the raw JSON blob.
+    """
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
@@ -78,7 +63,8 @@ def _call_ollama(prompt: str) -> str:
             timeout=120,
         )
         response.raise_for_status()
-        return response.json()["response"].strip().strip('"').strip("'")
+        data = response.json()
+        return data["response"].strip()
     except Exception as e:
         raise TranslationError(f"Ollama request failed: {str(e)}") from e
 
@@ -98,7 +84,11 @@ def _extract_json_object(text: str) -> dict | None:
 
 
 def translate_and_explain(text: str, target_language: str) -> dict:
-    translation = _translate_with_libretranslate(text, target_language)
+    # Optimization: skip translation if target is English
+    if target_language.lower() == "english":
+        translation = text
+    else:
+        translation = _translate_with_libretranslate(text, target_language)
 
     explanation_prompt = (
         "Provide a one-sentence explanation of the following English text: "
