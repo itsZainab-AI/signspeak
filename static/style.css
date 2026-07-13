@@ -28,6 +28,166 @@
 
 * { box-sizing: border-box; }
 
+/* ============ SPLASH SCREEN (goal-scoring intro) ============ */
+
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: radial-gradient(ellipse 700px 500px at 50% 45%, var(--pitch-dark-2), var(--pitch-deepest));
+  animation: splash-out 0.6s ease 2.9s forwards;
+}
+
+.splash-shake-wrap {
+  animation: screen-shake 0.35s ease 1.05s;
+}
+
+.splash-scene {
+  width: min(340px, 70vw);
+  height: auto;
+  overflow: visible;
+}
+
+.goal-frame {
+  opacity: 0;
+  animation: splash-frame-in 0.4s ease 0.1s forwards;
+}
+
+.goal-net {
+  opacity: 0;
+  transform-origin: 150px 90px;
+  animation: splash-frame-in 0.4s ease 0.2s forwards, net-ripple 0.45s ease 1.05s;
+}
+
+.goal-trail {
+  opacity: 0;
+  transform-origin: 150px 90px;
+  animation: trail-fly 1.05s cubic-bezier(0.2, 0, 0.1, 1) 0.3s forwards;
+}
+
+.goal-ball-wrap {
+  animation: ball-fly 1.05s cubic-bezier(0.2, 0, 0.1, 1) 0.3s forwards;
+}
+
+.goal-ball-spin {
+  transform-origin: 150px 90px;
+  animation: ball-spin 0.35s linear 0.3s 3;
+}
+
+.goal-rays {
+  opacity: 0;
+  transform-origin: 150px 90px;
+  animation: rays-burst 0.55s ease 1.05s forwards;
+}
+
+.goal-flash-1 {
+  opacity: 0;
+  transform-origin: 150px 90px;
+  animation: flash-burst 0.5s ease 1.05s forwards;
+}
+
+.goal-flash-2 {
+  opacity: 0;
+  transform-origin: 150px 90px;
+  animation: flash-ring 0.65s ease 1.08s forwards;
+}
+
+.splash-wordmark {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: var(--chalk);
+  margin: 0;
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  animation: wordmark-in 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.4) 1.35s forwards;
+}
+
+@keyframes splash-frame-in {
+  to { opacity: 1; }
+}
+
+/* ball travels most of the way, then a brief suspended hang before impact for drama */
+@keyframes ball-fly {
+  0% { transform: translate(0, 165px) scale(0.85); }
+  65% { transform: translate(0, 10px) scale(0.98); }
+  80% { transform: translate(0, 4px) scale(1); }
+  92% { transform: translate(0, 0) scale(1.18, 0.82); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes trail-fly {
+  0% { opacity: 0; transform: translate(0, 160px) scaleY(1); }
+  55% { opacity: 0.5; transform: translate(0, 20px) scaleY(1.3); }
+  90% { opacity: 0; transform: translate(0, 2px) scaleY(0.6); }
+  100% { opacity: 0; }
+}
+
+@keyframes ball-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(180deg); }
+}
+
+@keyframes screen-shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, 1px); }
+  80% { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes net-ripple {
+  0% { transform: scaleX(1); }
+  30% { transform: scaleX(1.06) skewX(-3deg); }
+  60% { transform: scaleX(0.97) skewX(1.5deg); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes rays-burst {
+  0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  40% { opacity: 1; transform: scale(1) rotate(8deg); }
+  100% { opacity: 0; transform: scale(1.9) rotate(14deg); }
+}
+
+@keyframes flash-burst {
+  0% { opacity: 0; transform: scale(0.3); }
+  35% { opacity: 1; transform: scale(1.6); }
+  100% { opacity: 0; transform: scale(7); }
+}
+
+@keyframes flash-ring {
+  0% { opacity: 0; transform: scale(0.5); }
+  25% { opacity: 0.9; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(9); }
+}
+
+@keyframes wordmark-in {
+  60% { transform: translateY(-2px) scale(1.05); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes splash-out {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #splash-screen {
+    animation: splash-out 0.01ms ease 0.01ms forwards;
+  }
+  .splash-shake-wrap { animation: none; }
+  .goal-frame, .goal-net, .goal-ball-wrap, .goal-ball-spin,
+  .goal-flash-1, .goal-flash-2, .goal-rays, .goal-trail, .splash-wordmark {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -59,6 +219,58 @@ body {
   );
 }
 
+/* ============ SWEEPING FLOODLIGHT BEAMS ============ */
+
+.floodlight-beams {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+.beam {
+  position: absolute;
+  top: -20%;
+  width: 240px;
+  height: 160%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,184,28,0.05) 45%,
+    rgba(255,184,28,0.08) 50%,
+    rgba(255,184,28,0.05) 55%,
+    transparent
+  );
+  transform: rotate(18deg);
+}
+
+.beam-1 {
+  left: -10%;
+  animation: beam-sweep-1 18s ease-in-out infinite;
+}
+
+.beam-2 {
+  left: 40%;
+  animation: beam-sweep-2 22s ease-in-out infinite;
+  animation-delay: -6s;
+}
+
+@keyframes beam-sweep-1 {
+  0%, 100% { left: -15%; }
+  50% { left: 55%; }
+}
+
+@keyframes beam-sweep-2 {
+  0%, 100% { left: 70%; }
+  50% { left: 5%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam { animation: none; }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px; height: 1px;
@@ -82,6 +294,61 @@ body {
   padding-bottom: 20px;
   border-bottom: 1px solid var(--pitch-line);
   animation: fade-down 0.6s ease both;
+  position: relative;
+}
+
+/* ============ AMBIENT PITCH PLAYER ============ */
+
+.pitch-player {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  width: 108px;
+  height: auto;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.pp-standing-leg {
+  transform-origin: 68px 66px;
+  animation: pp-sway 2.4s ease-in-out infinite;
+}
+
+.pp-kick-leg {
+  transform-origin: 72px 66px;
+  animation: pp-kick 2.4s ease-in-out infinite;
+}
+
+.pp-ball {
+  animation: pp-ball-roll 2.4s ease-in-out infinite;
+}
+
+@keyframes pp-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes pp-kick {
+  0%, 55% { transform: rotate(0deg); }
+  70% { transform: rotate(-38deg); }
+  85% { transform: rotate(-8deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes pp-ball-roll {
+  0%, 60% { transform: translate(0, 0); }
+  78% { transform: translate(14px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+
+@media (max-width: 460px) {
+  .pitch-player { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-standing-leg, .pp-kick-leg, .pp-ball {
+    animation: none;
+  }
 }
 
 .wordmark {
@@ -91,18 +358,41 @@ body {
 }
 
 .gate-icon {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   color: var(--chalk);
   flex-shrink: 0;
 }
 
 .wordmark h1 {
   font-family: var(--font-display);
-  font-size: 26px;
-  letter-spacing: 0.5px;
+  font-size: 34px;
+  letter-spacing: 1px;
   margin: 0;
+  background: linear-gradient(
+    100deg,
+    var(--chalk) 40%,
+    var(--floodlight) 50%,
+    var(--chalk) 60%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: var(--chalk);
+  animation: wordmark-shimmer 5s ease-in-out infinite;
+  animation-delay: 3.5s;
+}
+
+@keyframes wordmark-shimmer {
+  0% { background-position: 100% 0; }
+  35% { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark h1 { animation: none; background-position: -100% 0; }
 }
 
 .eyebrow {
@@ -219,6 +509,168 @@ main {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+/* ============ LANGUAGE CHIP STRIP ============ */
+
+.language-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  animation: fade-up 0.6s ease both;
+  animation-delay: 0.04s;
+}
+
+.lang-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--pitch-line);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--chalk-dim);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.15s ease, color 0.18s ease;
+}
+
+.lang-chip .lang-en {
+  font-size: 10.5px;
+  color: var(--chalk-faint);
+}
+
+.lang-chip:hover {
+  border-color: var(--floodlight);
+  background: var(--floodlight-soft);
+  transform: translateY(-1px);
+  color: var(--chalk);
+}
+
+.lang-chip:focus-visible {
+  outline: 2px solid var(--floodlight);
+  outline-offset: 2px;
+}
+
+.lang-chip.is-active {
+  border-color: var(--floodlight);
+  background: var(--floodlight-soft);
+  color: var(--chalk);
+}
+
+.lang-chip.is-active .lang-en {
+  color: var(--floodlight);
+}
+
+/* ============ PANEL HOVER POLISH ============ */
+
+.panel {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+  border-color: rgba(255,184,28,0.18);
+}
+
+.panel-number {
+  animation: badge-pulse 3s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(255,184,28,0); }
+  50% { box-shadow: 0 0 10px rgba(255,184,28,0.35); }
+}
+
+/* ============ LISTEN BUTTON ============ */
+
+.result-label {
+  position: relative;
+}
+
+.listen-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--pitch-line);
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--floodlight);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.listen-btn svg {
+  width: 11px;
+  height: 11px;
+}
+
+.listen-btn:hover {
+  background: var(--floodlight-soft);
+  border-color: var(--floodlight);
+  transform: scale(1.08);
+}
+
+.listen-btn:focus-visible {
+  outline: 2px solid var(--floodlight);
+  outline-offset: 2px;
+}
+
+.listen-btn.is-speaking {
+  background: var(--floodlight);
+  color: #1A1200;
+  animation: listen-pulse 1s ease-in-out infinite;
+}
+
+@keyframes listen-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(255,184,28,0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(255,184,28,0); }
+}
+
+/* ============ CELEBRATION SPARKS (on successful scan) ============ */
+
+.spark-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 5;
+}
+
+.spark {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--floodlight);
+  opacity: 0;
+  animation: spark-fly 0.7s ease-out forwards;
+}
+
+.spark.spark-chalk {
+  background: var(--chalk);
+  width: 4px;
+  height: 4px;
+}
+
+@keyframes spark-fly {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0.4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-number { animation: none; }
+  .listen-btn.is-speaking { animation: none; }
+  .spark { display: none; }
 }
 
 .panel {
@@ -466,6 +918,7 @@ main {
 /* ============ RESULTS BOARD (split-flap signature) ============ */
 
 .results-board {
+  position: relative;
   margin-top: 18px;
   display: flex;
   flex-direction: column;

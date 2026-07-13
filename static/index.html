@@ -11,6 +11,70 @@
 </head>
 <body>
 
+<div id="splash-screen" aria-hidden="true">
+  <div class="splash-shake-wrap">
+    <svg class="splash-scene" viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- goal frame -->
+      <g class="goal-frame" stroke="var(--chalk)" stroke-width="3" fill="none">
+        <line x1="70" y1="30" x2="230" y2="30"/>
+        <line x1="70" y1="30" x2="70" y2="150"/>
+        <line x1="230" y1="30" x2="230" y2="150"/>
+      </g>
+      <!-- net mesh -->
+      <g class="goal-net" stroke="var(--chalk-faint)" stroke-width="1">
+        <line x1="90" y1="30" x2="90" y2="150"/>
+        <line x1="110" y1="30" x2="110" y2="150"/>
+        <line x1="130" y1="30" x2="130" y2="150"/>
+        <line x1="150" y1="30" x2="150" y2="150"/>
+        <line x1="170" y1="30" x2="170" y2="150"/>
+        <line x1="190" y1="30" x2="190" y2="150"/>
+        <line x1="210" y1="30" x2="210" y2="150"/>
+        <line x1="70" y1="50" x2="230" y2="50"/>
+        <line x1="70" y1="70" x2="230" y2="70"/>
+        <line x1="70" y1="90" x2="230" y2="90"/>
+        <line x1="70" y1="110" x2="230" y2="110"/>
+        <line x1="70" y1="130" x2="230" y2="130"/>
+      </g>
+
+      <!-- light rays burst -->
+      <g class="goal-rays" stroke="var(--floodlight)" stroke-width="2.5" stroke-linecap="round">
+        <line x1="150" y1="90" x2="150" y2="55"/>
+        <line x1="150" y1="90" x2="150" y2="125"/>
+        <line x1="150" y1="90" x2="115" y2="90"/>
+        <line x1="150" y1="90" x2="185" y2="90"/>
+        <line x1="150" y1="90" x2="125" y2="65"/>
+        <line x1="150" y1="90" x2="175" y2="115"/>
+        <line x1="150" y1="90" x2="175" y2="65"/>
+        <line x1="150" y1="90" x2="125" y2="115"/>
+      </g>
+
+      <!-- flash rings -->
+      <circle class="goal-flash goal-flash-1" cx="150" cy="90" r="6" fill="var(--floodlight)"/>
+      <circle class="goal-flash goal-flash-2" cx="150" cy="90" r="6" fill="none" stroke="var(--floodlight)" stroke-width="2"/>
+
+      <!-- motion trail -->
+      <ellipse class="goal-trail" cx="150" cy="130" rx="9" ry="22" fill="var(--chalk-faint)"/>
+
+      <!-- ball (translate/impact on outer group, spin on inner group) -->
+      <g class="goal-ball-wrap">
+        <g class="goal-ball-spin">
+          <circle cx="150" cy="90" r="11" fill="var(--chalk)"/>
+          <polygon points="150,82 156,86.5 154,93.5 146,93.5 144,86.5" fill="var(--pitch-deepest)"/>
+          <polygon points="150,79 152,80.5 151,82.5 149,82.5 148,80.5" fill="var(--pitch-deepest)"/>
+          <path d="M141 90 L144 86.5 M159 90 L156 86.5 M146 98 L146 93.5 M154 98 L154 93.5"
+                stroke="var(--pitch-deepest)" stroke-width="1.4" fill="none"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="splash-wordmark">SIGNSPEAK</p>
+</div>
+
+<div class="floodlight-beams" aria-hidden="true">
+  <div class="beam beam-1"></div>
+  <div class="beam beam-2"></div>
+</div>
+
 <div class="field-lines" aria-hidden="true"></div>
 
 <div class="app">
@@ -26,7 +90,36 @@
       <h1>SignSpeak</h1>
     </div>
     <p class="eyebrow">Multilingual assistance point &middot; Gate 04 &middot; FIFA World&nbsp;Cup 2026</p>
+
+    <svg class="pitch-player" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- ball -->
+      <circle class="pp-ball" cx="118" cy="98" r="7" fill="var(--chalk-faint)"/>
+      <path class="pp-ball" d="M118 92 L121 96 L118 100 L115 96 Z M111 98 L118 98 M118 98 L125 98"
+            stroke="var(--pitch-dark-2)" stroke-width="0.6" fill="none"/>
+      <!-- player silhouette -->
+      <g class="pp-player">
+        <circle cx="70" cy="30" r="8" fill="var(--chalk-faint)"/>
+        <path d="M70 38 L70 66" stroke="var(--chalk-faint)" stroke-width="7" stroke-linecap="round"/>
+        <path d="M70 42 L52 52" stroke="var(--chalk-faint)" stroke-width="6" stroke-linecap="round"/>
+        <path d="M70 42 L88 50" stroke="var(--chalk-faint)" stroke-width="6" stroke-linecap="round"/>
+        <path class="pp-standing-leg" d="M68 66 L64 92" stroke="var(--chalk-faint)" stroke-width="7" stroke-linecap="round"/>
+        <path class="pp-kick-leg" d="M72 66 L98 88" stroke="var(--chalk-faint)" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </svg>
   </header>
+
+  <div class="language-strip" role="group" aria-label="Supported languages — click to select">
+    <button type="button" class="lang-chip" data-lang="Arabic"><span class="lang-native">العربية</span><span class="lang-en">Arabic</span></button>
+    <button type="button" class="lang-chip" data-lang="Chinese"><span class="lang-native">中文</span><span class="lang-en">Chinese</span></button>
+    <button type="button" class="lang-chip is-active" data-lang="English"><span class="lang-native">English</span></button>
+    <button type="button" class="lang-chip" data-lang="French"><span class="lang-native">Français</span><span class="lang-en">French</span></button>
+    <button type="button" class="lang-chip" data-lang="German"><span class="lang-native">Deutsch</span><span class="lang-en">German</span></button>
+    <button type="button" class="lang-chip" data-lang="Hindi"><span class="lang-native">हिन्दी</span><span class="lang-en">Hindi</span></button>
+    <button type="button" class="lang-chip" data-lang="Japanese"><span class="lang-native">日本語</span><span class="lang-en">Japanese</span></button>
+    <button type="button" class="lang-chip" data-lang="Korean"><span class="lang-native">한국어</span><span class="lang-en">Korean</span></button>
+    <button type="button" class="lang-chip" data-lang="Portuguese"><span class="lang-native">Português</span><span class="lang-en">Portuguese</span></button>
+    <button type="button" class="lang-chip" data-lang="Spanish"><span class="lang-native">Español</span><span class="lang-en">Spanish</span></button>
+  </div>
 
   <details class="info-board">
     <summary>
@@ -109,7 +202,17 @@
           <span class="result-value" id="result-original"></span>
         </div>
         <div class="result-row" data-row="translation">
-          <span class="result-label"><span class="result-index">02</span>Translation</span>
+          <span class="result-label">
+            <span class="result-index">02</span>Translation
+            <button type="button" class="listen-btn" id="listen-btn" aria-label="Listen to translation">
+              <svg class="listen-icon-play" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 4.5v11l9-5.5-9-5.5Z" fill="currentColor"/>
+              </svg>
+              <svg class="listen-icon-stop" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+                <rect x="5" y="5" width="10" height="10" rx="1.5" fill="currentColor"/>
+              </svg>
+            </button>
+          </span>
           <span class="result-value" id="result-translation"></span>
         </div>
         <div class="result-row" data-row="explanation">
