@@ -7,7 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
-
+from fastapi.staticfiles import StaticFiles
 from src.knowledge_base import answer_question
 from src.ocr_reader import OCRError, extract_text
 from src.translator import TranslationError, translate_and_explain
