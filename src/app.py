@@ -13,7 +13,7 @@ from src.ocr_reader import OCRError, extract_text
 from src.translator import TranslationError, translate_and_explain
 
 load_dotenv()
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024
 ALLOWED_IMAGE_CONTENT_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/bmp", "image/gif"}
 ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
@@ -21,7 +21,7 @@ MAX_QUESTION_LENGTH = 1000
 MAX_LANGUAGE_LENGTH = 50
 
 app = FastAPI(title="SignSpeak API")
-
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 def normalize_content_type(value: str | None) -> str | None:
     if not value:
