@@ -91,6 +91,12 @@
     </div>
     <p class="eyebrow">Multilingual assistance point &middot; Gate 04 &middot; FIFA World&nbsp;Cup 2026</p>
 
+    <nav class="quick-nav" aria-label="Section navigation">
+      <a href="#scan-panel">Scan</a>
+      <a href="#ask-panel">Ask</a>
+      <a href="#about-panel">About</a>
+    </nav>
+
     <svg class="pitch-player" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <!-- ball -->
       <circle class="pp-ball" cx="118" cy="98" r="7" fill="var(--chalk-faint)"/>
@@ -108,44 +114,33 @@
     </svg>
   </header>
 
-  <div class="language-strip" role="group" aria-label="Supported languages — click to select">
-    <button type="button" class="lang-chip" data-lang="Arabic"><span class="lang-native">العربية</span><span class="lang-en">Arabic</span></button>
-    <button type="button" class="lang-chip" data-lang="Chinese"><span class="lang-native">中文</span><span class="lang-en">Chinese</span></button>
-    <button type="button" class="lang-chip is-active" data-lang="English"><span class="lang-native">English</span></button>
-    <button type="button" class="lang-chip" data-lang="French"><span class="lang-native">Français</span><span class="lang-en">French</span></button>
-    <button type="button" class="lang-chip" data-lang="German"><span class="lang-native">Deutsch</span><span class="lang-en">German</span></button>
-    <button type="button" class="lang-chip" data-lang="Hindi"><span class="lang-native">हिन्दी</span><span class="lang-en">Hindi</span></button>
-    <button type="button" class="lang-chip" data-lang="Japanese"><span class="lang-native">日本語</span><span class="lang-en">Japanese</span></button>
-    <button type="button" class="lang-chip" data-lang="Korean"><span class="lang-native">한국어</span><span class="lang-en">Korean</span></button>
-    <button type="button" class="lang-chip" data-lang="Portuguese"><span class="lang-native">Português</span><span class="lang-en">Portuguese</span></button>
-    <button type="button" class="lang-chip" data-lang="Spanish"><span class="lang-native">Español</span><span class="lang-en">Spanish</span></button>
-  </div>
+  <section class="hero">
+    <h2 class="hero-headline">Every fan <span class="accent">understood</span>.<br>Every sign, every <span class="accent">language</span>.</h2>
+    <p class="hero-sub">Point a camera at any sign and get an instant translation and explanation. Ask a question and get a real answer. Everything runs on-device &mdash; nothing leaves the stadium.</p>
 
-  <details class="info-board">
-    <summary>
-      <span class="panel-number">00</span>
-      <span class="info-board-title">About this assistant</span>
-      <svg class="info-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      </svg>
-    </summary>
-    <div class="info-board-body">
-      <p>
-        SignSpeak is a <strong>Generative AI-powered accessibility assistant</strong>
-        built for the FIFA World&nbsp;Cup 2026 Smart Stadiums challenge, addressing
-        the <strong>Accessibility</strong> and <strong>Multilingual Assistance</strong>
-        pillars.
-      </p>
-      <ul class="info-board-list">
-        <li><strong>Scan &amp; translate</strong> &mdash; OCR reads any sign or notice, then translates it and generates a plain-language explanation using a locally-hosted LLM (Gemma&nbsp;2, via Ollama).</li>
-        <li><strong>Ask a question</strong> &mdash; the same LLM answers venue questions in natural language, drawn from a stadium FAQ knowledge base.</li>
-        <li><strong>10 languages supported</strong> &mdash; Arabic, Chinese, English, French, German, Hindi, Japanese, Korean, Portuguese, Spanish.</li>
-        <li><strong>Fully local-first</strong> &mdash; OCR, translation, and the LLM all run on-device. No data leaves the stadium, and there are no cloud API costs.</li>
-      </ul>
+    <div class="stat-strip">
+      <div class="stat"><span class="stat-num">10</span><span class="stat-label">Languages</span></div>
+      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Local models</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Cloud calls</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">On-device</span></div>
     </div>
-  </details>
 
-  <main>
+    <div class="language-strip" role="group" aria-label="Supported languages — click to select">
+      <button type="button" class="lang-chip" data-lang="Arabic"><span class="lang-native">العربية</span><span class="lang-en">Arabic</span></button>
+      <button type="button" class="lang-chip" data-lang="Chinese"><span class="lang-native">中文</span><span class="lang-en">Chinese</span></button>
+      <button type="button" class="lang-chip is-active" data-lang="English"><span class="lang-native">English</span></button>
+      <button type="button" class="lang-chip" data-lang="French"><span class="lang-native">Français</span><span class="lang-en">French</span></button>
+      <button type="button" class="lang-chip" data-lang="German"><span class="lang-native">Deutsch</span><span class="lang-en">German</span></button>
+      <button type="button" class="lang-chip" data-lang="Hindi"><span class="lang-native">हिन्दी</span><span class="lang-en">Hindi</span></button>
+      <button type="button" class="lang-chip" data-lang="Japanese"><span class="lang-native">日本語</span><span class="lang-en">Japanese</span></button>
+      <button type="button" class="lang-chip" data-lang="Korean"><span class="lang-native">한국어</span><span class="lang-en">Korean</span></button>
+      <button type="button" class="lang-chip" data-lang="Portuguese"><span class="lang-native">Português</span><span class="lang-en">Portuguese</span></button>
+      <button type="button" class="lang-chip" data-lang="Spanish"><span class="lang-native">Español</span><span class="lang-en">Spanish</span></button>
+    </div>
+  </section>
+
+  <main class="layout">
+    <div class="col-primary">
 
     <!-- ============ PANEL 01 — SCAN & TRANSLATE ============ -->
     <section class="panel" id="scan-panel" aria-labelledby="scan-heading">
@@ -221,9 +216,12 @@
         </div>
       </div>
     </section>
+    </div>
+
+    <div class="col-secondary">
 
     <!-- ============ PANEL 02 — ASK A QUESTION ============ -->
-    <section class="panel" id="ask-panel" aria-labelledby="ask-heading">
+    <section class="panel panel-secondary" id="ask-panel" aria-labelledby="ask-heading">
       <div class="panel-label">
         <span class="panel-number">02</span>
         <h2 id="ask-heading">Ask a question</h2>
@@ -250,6 +248,31 @@
         <p id="answer-text"></p>
       </div>
     </section>
+
+    <details class="info-board panel-secondary" id="about-panel">
+      <summary>
+        <span class="panel-number">00</span>
+        <span class="info-board-title">About this assistant</span>
+        <svg class="info-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </summary>
+      <div class="info-board-body">
+        <p>
+          SignSpeak is a <strong>Generative AI-powered accessibility assistant</strong>
+          built for the FIFA World&nbsp;Cup 2026 Smart Stadiums challenge, addressing
+          the <strong>Accessibility</strong> and <strong>Multilingual Assistance</strong>
+          pillars.
+        </p>
+        <ul class="info-board-list">
+          <li><strong>Scan &amp; translate</strong> &mdash; OCR reads any sign or notice, then translates it and generates a plain-language explanation using a locally-hosted LLM (Gemma&nbsp;2, via Ollama).</li>
+          <li><strong>Ask a question</strong> &mdash; the same LLM answers venue questions in natural language, drawn from a stadium FAQ knowledge base.</li>
+          <li><strong>Fully local-first</strong> &mdash; OCR, translation, and the LLM all run on-device. No data leaves the stadium, and there are no cloud API costs.</li>
+        </ul>
+      </div>
+    </details>
+
+    </div>
 
   </main>
 
