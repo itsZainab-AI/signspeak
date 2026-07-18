@@ -120,9 +120,9 @@
 
     <div class="stat-strip">
       <div class="stat"><span class="stat-num">10</span><span class="stat-label">Languages</span></div>
-      <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Powered</span></div>
-      <div class="stat"><span class="stat-num">OCR</span><span class="stat-label">Sign reading</span></div>
-      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free</span></div>
+      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Local models</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Cloud calls</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">On-device</span></div>
     </div>
 
     <div class="language-strip" role="group" aria-label="Supported languages — click to select">
@@ -142,77 +142,77 @@
   <main class="layout">
     <div class="col-primary">
 
-    <!-- ============ PANEL 01 — SCAN & TRANSLATE ============ -->
-    <section class="panel" id="scan-panel" aria-labelledby="scan-heading">
-      <div class="panel-label">
-        <span class="panel-number">01</span>
-        <h2 id="scan-heading">Scan &amp; translate a sign</h2>
-      </div>
-      <p class="panel-sub">Point your camera at any sign, menu, or notice. We'll read it and translate it for you.</p>
+    <!-- ============ SCENE 01 — SCAN & TRANSLATE ============ -->
+    <section class="scene scene-01" id="scan-panel" aria-labelledby="scan-heading">
+      <span class="scene-number" aria-hidden="true">01</span>
+      <div class="scene-content">
+        <h2 id="scan-heading" class="scene-heading">Scan &amp; translate a sign</h2>
+        <p class="scene-sub">Point your camera at any sign, menu, or notice. We'll read it and translate it for you.</p>
 
-      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload or capture a photo of a sign">
-        <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
-        <svg class="dropzone-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="12" width="40" height="28" rx="3" stroke="currentColor" stroke-width="2.5"/>
-          <circle cx="24" cy="26" r="8" stroke="currentColor" stroke-width="2.5"/>
-          <rect x="16" y="6" width="10" height="6" rx="1.5" fill="currentColor"/>
-        </svg>
-        <p class="dropzone-text"><strong>Tap to scan</strong> or choose a photo</p>
-        <div class="scan-preview" id="scan-preview" hidden>
-          <img id="preview-image" alt="Selected sign preview">
+        <div class="scan-strip" id="dropzone" tabindex="0" role="button" aria-label="Upload or capture a photo of a sign">
+          <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
+          <svg class="dropzone-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="4" y="12" width="40" height="28" rx="3" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="24" cy="26" r="8" stroke="currentColor" stroke-width="2.5"/>
+            <rect x="16" y="6" width="10" height="6" rx="1.5" fill="currentColor"/>
+          </svg>
+          <p class="dropzone-text"><strong>Tap to scan</strong> or choose a photo</p>
+          <div class="scan-preview" id="scan-preview" hidden>
+            <img id="preview-image" alt="Selected sign preview">
+          </div>
         </div>
-      </div>
 
-      <div class="controls-row">
-        <div class="select-wrap">
-          <label for="language-select" class="control-label">Translate to</label>
-          <select id="language-select" class="gate-select">
-            <option value="Arabic">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; &middot; Arabic</option>
-            <option value="Chinese">&#20013;&#25991; &middot; Chinese</option>
-            <option value="English" selected>English</option>
-            <option value="French">Fran&ccedil;ais &middot; French</option>
-            <option value="German">Deutsch &middot; German</option>
-            <option value="Hindi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368; &middot; Hindi</option>
-            <option value="Japanese">&#26085;&#26412;&#35486; &middot; Japanese</option>
-            <option value="Korean">&#54620;&#44397;&#50612; &middot; Korean</option>
-            <option value="Portuguese">Portugu&ecirc;s &middot; Portuguese</option>
-            <option value="Spanish">Espa&ntilde;ol &middot; Spanish</option>
-          </select>
+        <div class="controls-row">
+          <div class="select-wrap">
+            <label for="language-select" class="control-label">Translate to</label>
+            <select id="language-select" class="gate-select">
+              <option value="Arabic">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; &middot; Arabic</option>
+              <option value="Chinese">&#20013;&#25991; &middot; Chinese</option>
+              <option value="English" selected>English</option>
+              <option value="French">Fran&ccedil;ais &middot; French</option>
+              <option value="German">Deutsch &middot; German</option>
+              <option value="Hindi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368; &middot; Hindi</option>
+              <option value="Japanese">&#26085;&#26412;&#35486; &middot; Japanese</option>
+              <option value="Korean">&#54620;&#44397;&#50612; &middot; Korean</option>
+              <option value="Portuguese">Portugu&ecirc;s &middot; Portuguese</option>
+              <option value="Spanish">Espa&ntilde;ol &middot; Spanish</option>
+            </select>
+          </div>
+          <button id="scan-button" class="btn-primary" disabled>
+            <span class="btn-label">Scan sign</span>
+          </button>
         </div>
-        <button id="scan-button" class="btn-primary" disabled>
-          <span class="btn-label">Scan sign</span>
-        </button>
-      </div>
 
-      <div class="status-panel" id="scan-loading" hidden aria-live="polite">
-        <div class="scan-line"></div>
-        <p>Reading the sign&hellip;</p>
-      </div>
-
-      <div class="status-panel error" id="scan-error" hidden aria-live="assertive"></div>
-
-      <div class="results-board" id="scan-results" hidden aria-live="polite">
-        <div class="result-row" data-row="original">
-          <span class="result-label"><span class="result-index">01</span>Original</span>
-          <span class="result-value" id="result-original"></span>
+        <div class="status-line" id="scan-loading" hidden aria-live="polite">
+          <div class="scan-line"></div>
+          <p>Reading the sign&hellip;</p>
         </div>
-        <div class="result-row" data-row="translation">
-          <span class="result-label">
-            <span class="result-index">02</span>Translation
-            <button type="button" class="listen-btn" id="listen-btn" aria-label="Listen to translation">
-              <svg class="listen-icon-play" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M5 4.5v11l9-5.5-9-5.5Z" fill="currentColor"/>
-              </svg>
-              <svg class="listen-icon-stop" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
-                <rect x="5" y="5" width="10" height="10" rx="1.5" fill="currentColor"/>
-              </svg>
-            </button>
-          </span>
-          <span class="result-value" id="result-translation"></span>
-        </div>
-        <div class="result-row" data-row="explanation">
-          <span class="result-label"><span class="result-index">03</span>Meaning</span>
-          <span class="result-value" id="result-explanation"></span>
+
+        <div class="status-line error" id="scan-error" hidden aria-live="assertive"></div>
+
+        <div class="score-sheet" id="scan-results" hidden aria-live="polite">
+          <div class="score-row score-row-minor" data-row="original">
+            <span class="score-label">Original</span>
+            <span class="score-value" id="result-original"></span>
+          </div>
+          <div class="score-row score-row-hero" data-row="translation">
+            <span class="score-label">
+              Translation
+              <button type="button" class="listen-btn" id="listen-btn" aria-label="Listen to translation">
+                <svg class="listen-icon-play" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M5 4.5v11l9-5.5-9-5.5Z" fill="currentColor"/>
+                </svg>
+                <svg class="listen-icon-stop" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+                  <rect x="5" y="5" width="10" height="10" rx="1.5" fill="currentColor"/>
+                </svg>
+              </button>
+            </span>
+            <span class="score-value score-value-hero" id="result-translation"></span>
+          </div>
+          <div class="score-row score-row-minor" data-row="explanation">
+            <span class="score-label">Meaning</span>
+            <span class="score-value" id="result-explanation"></span>
+          </div>
         </div>
       </div>
     </section>
@@ -220,64 +220,74 @@
 
     <div class="col-secondary">
 
-    <!-- ============ PANEL 02 — ASK A QUESTION ============ -->
-    <section class="panel panel-secondary" id="ask-panel" aria-labelledby="ask-heading">
-      <div class="panel-label">
-        <span class="panel-number">02</span>
-        <h2 id="ask-heading">Ask a question</h2>
-      </div>
-      <p class="panel-sub">Restrooms, food, exits, medical help &mdash; ask anything about the venue.</p>
+    <!-- ============ SCENE 02 — ASK A QUESTION ============ -->
+    <section class="scene scene-02" id="ask-panel" aria-labelledby="ask-heading">
+      <span class="scene-number" aria-hidden="true">02</span>
+      <div class="scene-content">
+        <h2 id="ask-heading" class="scene-heading">Ask a question</h2>
+        <p class="scene-sub">Restrooms, food, exits, medical help &mdash; ask anything about the venue.</p>
 
-      <form id="ask-form" class="ask-row">
-        <label for="question-input" class="visually-hidden">Your question</label>
-        <input type="text" id="question-input" placeholder="Where's the nearest restroom?" autocomplete="off">
-        <button type="submit" class="btn-primary">
-          <span class="btn-label">Ask</span>
-        </button>
-      </form>
+        <form id="ask-form" class="ask-row">
+          <label for="question-input" class="visually-hidden">Your question</label>
+          <input type="text" id="question-input" placeholder="Where's the nearest restroom?" autocomplete="off">
+          <button type="submit" class="btn-primary">
+            <span class="btn-label">Ask</span>
+            <svg viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M1 6h13M9 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
 
-      <div class="status-panel" id="ask-loading" hidden aria-live="polite">
-        <div class="scan-line"></div>
-        <p>Checking&hellip;</p>
-      </div>
+        <div class="status-line" id="ask-loading" hidden aria-live="polite">
+          <div class="scan-line"></div>
+          <p>Checking&hellip;</p>
+        </div>
 
-      <div class="status-panel error" id="ask-error" hidden aria-live="assertive"></div>
+        <div class="status-line error" id="ask-error" hidden aria-live="assertive"></div>
 
-      <div class="answer-card" id="answer-card" hidden aria-live="polite">
-        <span class="answer-tag">Answer</span>
-        <p id="answer-text"></p>
+        <blockquote class="answer-quote" id="answer-card" hidden aria-live="polite">
+          <p id="answer-text"></p>
+        </blockquote>
       </div>
     </section>
-
-    <details class="info-board panel-secondary" id="about-panel">
-      <summary>
-        <span class="panel-number">00</span>
-        <span class="info-board-title">About this assistant</span>
-        <svg class="info-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        </svg>
-      </summary>
-      <div class="info-board-body">
-        <p>
-          SignSpeak is a <strong>Generative AI-powered accessibility assistant</strong>
-          built for the FIFA World&nbsp;Cup 2026 Smart Stadiums challenge, addressing
-          the <strong>Accessibility</strong> and <strong>Multilingual Assistance</strong>
-          pillars.
-        </p>
-        <ul class="info-board-list">
-          <li><strong>Scan &amp; translate</strong> &mdash; OCR reads any sign or notice, then translates it via MyMemory and generates a plain-language explanation using Gemma&nbsp;2 (via HuggingFace).</li>
-          <li><strong>Ask a question</strong> &mdash; the AI answers venue questions in natural language, drawn from a stadium FAQ knowledge base.</li>
-          <li><strong>Accessible &amp; free</strong> &mdash; built with open-source tools &mdash; Tesseract OCR, MyMemory translation, and HuggingFace inference &mdash; no paid APIs required.</li>
-        </ul>
-      </div>
-    </details>
 
     </div>
 
   </main>
 
+  <details class="scene scene-00" id="about-panel">
+    <summary class="scene-summary">
+      <span class="scene-number scene-number-inline" aria-hidden="true">00</span>
+      <span class="info-board-title">About this assistant</span>
+      <svg class="info-chevron" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </summary>
+    <div class="info-board-body">
+      <p>
+        SignSpeak is a <strong>Generative AI-powered accessibility assistant</strong>
+        built for the FIFA World&nbsp;Cup 2026 Smart Stadiums challenge, addressing
+        the <strong>Accessibility</strong> and <strong>Multilingual Assistance</strong>
+        pillars.
+      </p>
+      <ul class="info-board-list">
+        <li><strong>Scan &amp; translate</strong> &mdash; OCR reads any sign or notice, translates it, and generates a plain-language explanation using a generative language model.</li>
+        <li><strong>Ask a question</strong> &mdash; the same LLM answers venue questions in natural language, drawn from a stadium FAQ knowledge base.</li>
+        <li><strong>Accessible &amp; free</strong> &mdash; built with open-source and free tools &mdash; Tesseract OCR for scanning, and either fully local (Ollama + LibreTranslate) or free hosted APIs (Groq + MyMemory) depending on deployment mode &mdash; no paid APIs required either way.</li>
+      </ul>
+      <p class="info-board-note">
+        <strong>Note on this live demo:</strong> free public hosting can't run
+        a continuously-loaded local LLM, so this deployed version uses
+        hosted inference (Groq) in place of local Ollama/LibreTranslate.
+        Clone the <a href="https://github.com/itsZainab-AI/signspeak" target="_blank" rel="noopener">GitHub repo</a>
+        and follow the setup instructions to run the full local-first
+        version as designed.
+      </p>
+    </div>
+  </details>
+
   <footer class="site-footer">
-    <p>Powered by Tesseract OCR &middot; MyMemory &middot; HuggingFace &middot; Built for FIFA World&nbsp;Cup 2026</p>
+    <p>Processed on-device &middot; no data leaves the stadium</p>
   </footer>
 
 </div>

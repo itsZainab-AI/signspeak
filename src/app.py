@@ -21,7 +21,6 @@ MAX_QUESTION_LENGTH = 1000
 MAX_LANGUAGE_LENGTH = 50
 
 app = FastAPI(title="SignSpeak API")
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 def normalize_content_type(value: str | None) -> str | None:
     if not value:
@@ -120,3 +119,6 @@ async def ask(question: str = Body(..., embed=True)):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+# Mount static files LAST so API routes (/scan, /ask, /health) take priority
+app.mount("/", StaticFiles(directory="static", html=True), name="static")

@@ -1,10 +1,14 @@
 import json
+import os
 import re
 
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+
+DEPLOY_MODE = os.getenv("DEPLOY_MODE", "local")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 
 
 class TranslationError(Exception):
@@ -25,7 +29,76 @@ LANGUAGE_TO_ISO = {
 }
 
 
+def _call_groq(prompt: str) -> str:
+    """Call Groq's OpenAI-compatible chat completions API for hosted mode.
+
+    Sends a prompt to Groq's llama-3.1-8b-instant model and returns the clean extracted response text.
+    """
+    if not GROQ_API_KEY:
+        raise TranslationError("GROQ_API_KEY environment variable not set")
+
+    try:
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            json={
+                "model": "llama-3.1-8b-instant",
+                "messages": [{"role": "user", "content": prompt}],
+            },
+            headers=headers,
+            timeout=120,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"].strip()
+    except requests.exceptions.RequestException:
+        raise TranslationError("Groq inference request failed")
+    except Exception:
+        raise TranslationError("Groq inference processing failed")
+
+
+def _translate_with_mymemory(text: str, target_language: str) -> str:
+    """Translate using MyMemory API for hosted mode."""
+    if target_language.lower() == "english":
+        return text
+
+    iso_code = LANGUAGE_TO_ISO.get(target_language.lower())
+    if not iso_code:
+        raise TranslationError(f"Unsupported target language: {target_language}")
+
+    try:
+        response = requests.get(
+            "https://api.mymemory.translated.net/get",
+            params={"q": text, "langpair": f"en|{iso_code}"},
+            timeout=15,
+        )
+        response.raise_for_status()
+        data = response.json()
+        if data.get("responseStatus") == 200:
+            return data.get("responseData", {}).get("translatedText", "")
+        else:
+            raise TranslationError(f"MyMemory API error: {data.get('responseStatus')}")
+    except requests.exceptions.ConnectionError:
+        raise TranslationError("MyMemory API connection failed")
+    except requests.exceptions.Timeout:
+        raise TranslationError("MyMemory API request timed out")
+    except requests.exceptions.HTTPError:
+        raise TranslationError("MyMemory API service returned an error")
+    except Exception as e:
+        if isinstance(e, TranslationError):
+            raise
+        raise TranslationError("MyMemory API translation failed")
+
+
+
+
 def _translate_with_libretranslate(text: str, target_language: str) -> str:
+    if DEPLOY_MODE == "hosted":
+        return _translate_with_mymemory(text, target_language)
+
     if target_language.lower() == "english":
         return text
 
@@ -57,7 +130,12 @@ def _call_ollama(prompt: str) -> str:
     Parses the JSON reply from Ollama, extracts the ``response`` field,
     and returns it stripped of surrounding whitespace. Never returns
     the raw JSON blob.
+
+    In hosted mode, delegates to Groq inference API instead.
     """
+    if DEPLOY_MODE == "hosted":
+        return _call_groq(prompt)
+
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
