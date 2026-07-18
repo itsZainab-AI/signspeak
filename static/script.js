@@ -2,7 +2,7 @@
 // SignSpeak frontend — talks to POST /scan and POST /ask
 // ============================================================
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "";
 
 const RTL_LANGUAGES = new Set(["Arabic"]);
 

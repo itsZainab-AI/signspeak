@@ -100,6 +100,15 @@ python -m pytest tests/ -v
 - Regional dialect variation, such as Egyptian vs. Moroccan Arabic, is reflected in explanation tone through the LLM layer, while core translation uses standard language forms.
 - OCR preprocessing uses binarization tuned for high-contrast stylized signage and may need adjustment for very low-contrast or handwritten signs.
 
+### Deployment Mode
+
+This project supports a `DEPLOY_MODE` environment variable with two modes: `local` or `hosted`.
+
+- In `local` mode (the default and the mode used when running the project as documented in Setup), translation and explanation run entirely through the intended self-hosted architecture: Ollama/Gemma 2 for LLM inference and LibreTranslate for translation.
+- In `hosted` mode, used only for the publicly deployed demo link, these components are swapped for equivalent free hosted APIs: Groq for LLM inference and MyMemory for translation. This swap exists solely because free-tier public hosting cannot run a continuously-loaded local LLM, not because the project’s core local-first design has changed.
+
+Cloning the repository and running it locally uses the full intended architecture.
+
 ## Supported Languages
 
 - Arabic
