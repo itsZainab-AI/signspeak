@@ -6,6 +6,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile, Body
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool
 from starlette.requests import Request
 from fastapi.staticfiles import StaticFiles
 from src.knowledge_base import answer_question
@@ -91,8 +92,8 @@ async def scan_image(
             destination.write(file_bytes)
 
         try:
-            original_text = extract_text(temp_path)
-            result = translate_and_explain(original_text, target_language)
+            original_text = await run_in_threadpool(extract_text, temp_path)
+            result = await run_in_threadpool(translate_and_explain, original_text, target_language)
         except OCRError as e:
             raise HTTPException(status_code=422, detail=str(e))
         except TranslationError as e:
