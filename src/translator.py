@@ -72,18 +72,36 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
 
     email = os.getenv("MYMEMORY_EMAIL", "").strip()
     base_url = "https://api.mymemory.translated.net/get"
+    params = {
+        "q": text,
+        "langpair": f"en|{iso_code}",
+    }
     if email:
-        request_url = f"{base_url}?q={text}&langpair=en|{iso_code}&de={email}"
-    else:
-        request_url = f"{base_url}?q={text}&langpair=en|{iso_code}"
+        params["de"] = email
 
     for attempt in range(2):
         try:
-            response = requests.get(request_url, timeout=8)
-            response.raise_for_status()
+            response = requests.get(base_url, params=params, timeout=8)
+            try:
+                response.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                # Print response body/status to aid debugging in logs
+                resp = getattr(e, "response", None) or response
+                try:
+                    print("MyMemory HTTPError response:", resp.status_code, resp.text)
+                except Exception:
+                    print("MyMemory HTTPError and response not available")
+                raise
+
             data = response.json()
             if data.get("responseStatus") == 200:
                 return data.get("responseData", {}).get("translatedText", "")
+
+            # Log the non-200 application-level responseStatus for visibility
+            try:
+                print("MyMemory API returned non-200 responseStatus:", data)
+            except Exception:
+                print("MyMemory API returned non-200 responseStatus and response body unavailable")
 
             if attempt == 0:
                 time.sleep(0.3)
@@ -94,16 +112,19 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
             if attempt == 0:
                 time.sleep(0.3)
                 continue
+            print("MyMemory connection error on attempt", attempt + 1)
             raise TranslationError("MyMemory API connection failed")
         except requests.exceptions.Timeout:
             if attempt == 0:
                 time.sleep(0.3)
                 continue
+            print("MyMemory request timed out on attempt", attempt + 1)
             raise TranslationError("MyMemory API request timed out")
         except requests.exceptions.HTTPError:
             if attempt == 0:
                 time.sleep(0.3)
                 continue
+            print("MyMemory HTTP error on attempt", attempt + 1)
             raise TranslationError("MyMemory API service returned an error")
         except Exception as e:
             if isinstance(e, TranslationError):
@@ -111,6 +132,11 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
             if attempt == 0:
                 time.sleep(0.3)
                 continue
+            # Last-resort logging for unexpected exceptions
+            try:
+                print("MyMemory unexpected error:", repr(e))
+            except Exception:
+                pass
             raise TranslationError("MyMemory API translation failed")
 
     raise TranslationError("MyMemory API translation failed")
