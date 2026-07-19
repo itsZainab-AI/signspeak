@@ -71,17 +71,15 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
         raise TranslationError(f"Unsupported target language: {target_language}")
 
     email = os.getenv("MYMEMORY_EMAIL", "").strip()
-    params = {"q": text, "langpair": f"en|{iso_code}"}
+    base_url = "https://api.mymemory.translated.net/get"
     if email:
-        params["de"] = email
+        request_url = f"{base_url}?q={text}&langpair=en|{iso_code}&de={email}"
+    else:
+        request_url = f"{base_url}?q={text}&langpair=en|{iso_code}"
 
     for attempt in range(2):
         try:
-            response = requests.get(
-                "https://api.mymemory.translated.net/get",
-                params=params,
-                timeout=15,
-            )
+            response = requests.get(request_url, timeout=15)
             response.raise_for_status()
             data = response.json()
             if data.get("responseStatus") == 200:
@@ -93,14 +91,26 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
 
             raise TranslationError(f"MyMemory API error: {data.get('responseStatus')}")
         except requests.exceptions.ConnectionError:
+            if attempt == 0:
+                time.sleep(1)
+                continue
             raise TranslationError("MyMemory API connection failed")
         except requests.exceptions.Timeout:
+            if attempt == 0:
+                time.sleep(1)
+                continue
             raise TranslationError("MyMemory API request timed out")
         except requests.exceptions.HTTPError:
+            if attempt == 0:
+                time.sleep(1)
+                continue
             raise TranslationError("MyMemory API service returned an error")
         except Exception as e:
             if isinstance(e, TranslationError):
                 raise
+            if attempt == 0:
+                time.sleep(1)
+                continue
             raise TranslationError("MyMemory API translation failed")
 
     raise TranslationError("MyMemory API translation failed")
