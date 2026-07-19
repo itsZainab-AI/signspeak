@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -69,28 +70,40 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
     if not iso_code:
         raise TranslationError(f"Unsupported target language: {target_language}")
 
-    try:
-        response = requests.get(
-            "https://api.mymemory.translated.net/get",
-            params={"q": text, "langpair": f"en|{iso_code}"},
-            timeout=15,
-        )
-        response.raise_for_status()
-        data = response.json()
-        if data.get("responseStatus") == 200:
-            return data.get("responseData", {}).get("translatedText", "")
-        else:
+    email = os.getenv("MYMEMORY_EMAIL", "").strip()
+    params = {"q": text, "langpair": f"en|{iso_code}"}
+    if email:
+        params["de"] = email
+
+    for attempt in range(2):
+        try:
+            response = requests.get(
+                "https://api.mymemory.translated.net/get",
+                params=params,
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json()
+            if data.get("responseStatus") == 200:
+                return data.get("responseData", {}).get("translatedText", "")
+
+            if attempt == 0:
+                time.sleep(1)
+                continue
+
             raise TranslationError(f"MyMemory API error: {data.get('responseStatus')}")
-    except requests.exceptions.ConnectionError:
-        raise TranslationError("MyMemory API connection failed")
-    except requests.exceptions.Timeout:
-        raise TranslationError("MyMemory API request timed out")
-    except requests.exceptions.HTTPError:
-        raise TranslationError("MyMemory API service returned an error")
-    except Exception as e:
-        if isinstance(e, TranslationError):
-            raise
-        raise TranslationError("MyMemory API translation failed")
+        except requests.exceptions.ConnectionError:
+            raise TranslationError("MyMemory API connection failed")
+        except requests.exceptions.Timeout:
+            raise TranslationError("MyMemory API request timed out")
+        except requests.exceptions.HTTPError:
+            raise TranslationError("MyMemory API service returned an error")
+        except Exception as e:
+            if isinstance(e, TranslationError):
+                raise
+            raise TranslationError("MyMemory API translation failed")
+
+    raise TranslationError("MyMemory API translation failed")
 
 
 
