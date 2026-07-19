@@ -79,37 +79,37 @@ def _translate_with_mymemory(text: str, target_language: str) -> str:
 
     for attempt in range(2):
         try:
-            response = requests.get(request_url, timeout=15)
+            response = requests.get(request_url, timeout=8)
             response.raise_for_status()
             data = response.json()
             if data.get("responseStatus") == 200:
                 return data.get("responseData", {}).get("translatedText", "")
 
             if attempt == 0:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue
 
             raise TranslationError(f"MyMemory API error: {data.get('responseStatus')}")
         except requests.exceptions.ConnectionError:
             if attempt == 0:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue
             raise TranslationError("MyMemory API connection failed")
         except requests.exceptions.Timeout:
             if attempt == 0:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue
             raise TranslationError("MyMemory API request timed out")
         except requests.exceptions.HTTPError:
             if attempt == 0:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue
             raise TranslationError("MyMemory API service returned an error")
         except Exception as e:
             if isinstance(e, TranslationError):
                 raise
             if attempt == 0:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue
             raise TranslationError("MyMemory API translation failed")
 
